@@ -1,28 +1,18 @@
-package com.example.personmanager.model;
+package com.example.personmanager.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
-
 import java.time.LocalDate;
 
-@Entity
-public class Person {
+public class PersonDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Nimi on kohustuslik")
     private String name;
 
-
-
-    @Past(message = "Sünniaeg peab olema minevikus")
+    @Past(message = "Sünniaeg peab olema minevikus ")
     private LocalDate birthDate;
 
     @Email(message = "E-posti aadress on vale")
@@ -30,10 +20,12 @@ public class Person {
 
     private String phoneNumber;
 
-    public Person() {
+    // Constructors
+    public PersonDTO() {
     }
 
-    public Person(String name, LocalDate birthDate, String email, String phoneNumber) {
+    public PersonDTO(Long id, String name, LocalDate birthDate, String email, String phoneNumber) {
+        this.id = id;
         this.name = name;
         this.birthDate = birthDate;
         this.email = email;
@@ -79,16 +71,5 @@ public class Person {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", birthDate=" + birthDate +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
     }
 }

@@ -1,5 +1,7 @@
 package com.example.personmanager.controller;
 
+import com.example.personmanager.dto.PersonDTO;
+import com.example.personmanager.mapper.PersonMapper;
 import com.example.personmanager.model.Person;
 import com.example.personmanager.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,35 +18,41 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
+    private final PersonMapper personMapper;
 
     @Autowired
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, PersonMapper personMapper) {
         this.personService = personService;
+        this.personMapper = personMapper;
     }
 
     @GetMapping
-    public List<Person> getAllPersons() {
-        return personService.getAllPersons();
+    public List<PersonDTO> getAllPersons() {
+        return personMapper.toDTOList(personService.getAllPersons());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> getPersonById(@PathVariable Long id) {
+    public ResponseEntity<PersonDTO> getPersonById(@PathVariable Long id) {
         return personService.getPersonById(id)
-                .map(ResponseEntity::ok)
+                .map(person -> ResponseEntity.ok(personMapper.toDTO(person)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Person> createPerson(@Valid @RequestBody Person person) {
-        return new ResponseEntity<>(personService.savePerson(person), HttpStatus.CREATED);
+    public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO personDTO) {
+        Person person = personMapper.toEntity(personDTO);
+        Person savedPerson = personService.savePerson(person);
+        return new ResponseEntity<>(personMapper.toDTO(savedPerson), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable Long id, @Valid @RequestBody Person person) {
+    public ResponseEntity<PersonDTO> updatePerson(@PathVariable Long id, @Valid @RequestBody PersonDTO personDTO) {
         return personService.getPersonById(id)
                 .map(existingPerson -> {
-                    person.setId(id);
-                    return ResponseEntity.ok(personService.savePerson(person));
+                    personDTO.setId(id);
+                    Person person = personMapper.toEntity(personDTO);
+                    Person updatedPerson = personService.savePerson(person);
+                    return ResponseEntity.ok(personMapper.toDTO(updatedPerson));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -60,7 +68,7 @@ public class PersonController {
     }
 
     @GetMapping("/search")
-    public List<Person> searchPersons(@RequestParam String name) {
-        return personService.searchPersons(name);
+    public List<PersonDTO> searchPersons(@RequestParam String name) {
+        return personMapper.toDTOList(personService.searchPersons(name));
     }
 }
