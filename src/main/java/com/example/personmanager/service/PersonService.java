@@ -35,6 +35,6 @@ public class PersonService {
     }
 
     public List<Person> searchPersons(String name) {
-        return personRepository.findByNameCaseInsensitive(name);
+        return personRepository.findByNameContainingIgnoreCase(name);
     }
 }

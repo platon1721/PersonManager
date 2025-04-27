@@ -17,15 +17,15 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is needed")
+    @NotBlank(message = "Nimi on kohustuslik")
     private String name;
 
 
 
-    @Past(message = "Date of birth must be in past")
+    @Past(message = "Sünniaeg peab olema minevikus ")
     private LocalDate birthDate;
 
-    @Email(message = "Email is incorrect")
+    @Email(message = "E-posti aadress on vale")
     private String email;
 
     private String phoneNumber;
